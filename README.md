@@ -1,0 +1,41 @@
+# Portfólio de projetos
+
+Seleção de projetos pessoais de desenvolvimento web, automação e inteligência artificial. Os projetos privados são apresentados apenas por descrições resumidas; código-fonte, credenciais e informações internas não são publicados aqui.
+
+## Projetos
+
+### Agente de IA para apoio ao desenvolvimento
+**Tecnologias:** JavaScript, GitHub Copilot no VS Code.
+
+Agente coordenador reutilizável para apoiar tarefas de desenvolvimento em diferentes projetos. Organiza tarefas, delega atividades delimitadas a agentes especialistas e integra os resultados seguindo as instruções e validações de cada projeto.
+
+**Status:** em desenvolvimento. Código-fonte não público.
+
+### Otimizador de Windows
+**Tecnologias:** Python, APIs de modelos de IA, testes automatizados.
+
+Ferramenta em desenvolvimento para investigar problemas de desempenho no Windows e preparar propostas de ajustes reversíveis. Um agente de IA auxilia na pesquisa e no planejamento; a aplicação de alterações depende de revisão e aprovação humana.
+
+**Status:** em desenvolvimento. Código-fonte não público.
+
+### Bot de acompanhamento para Discord
+**Tecnologias:** TypeScript, SQLite, Docker, Discord.
+
+Bot para apoiar a organização de um processo probatório em uma comunidade: registra participantes, acompanha etapas, permite documentar avaliações e envia lembretes.
+
+**Status:** projeto pessoal. Código-fonte não público.
+
+### Portfólio pessoal
+**Tecnologias:** HTML, CSS.
+
+Projeto de estudo com páginas de apresentação pessoal e currículo.
+
+**Repositório público:** [primeiro-projeto-em-html-css](https://github.com/ppalvesp/primeiro-projeto-em-html-css)
+
+## Tecnologias e temas
+
+Python · JavaScript · TypeScript · HTML · CSS · SQLite · Docker · agentes de IA · APIs de modelos de IA · automação · bots para Discord · testes automatizados
+
+## Perfil
+
+[GitHub: ppalvesp](https://github.com/ppalvesp)
