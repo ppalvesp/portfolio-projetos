@@ -11,6 +11,13 @@ Agente coordenador reutilizável para apoiar tarefas de desenvolvimento em difer
 
 **Status:** em desenvolvimento. Código-fonte não público.
 
+### IDE de visualização de agentes
+**Tecnologias:** JavaScript, Node.js, Canvas, GitHub Copilot.
+
+Monitor local que representa agentes de IA como redes animadas e mostra delegações e retornos observados em uma sessão autorizada. A interface também apresenta estados e, quando disponíveis, modelo de linguagem e ferramentas utilizadas.
+
+**Status:** protótipo funcional em desenvolvimento. Código-fonte não público.
+
 ### Otimizador de Windows
 **Tecnologias:** Python, APIs de modelos de IA, testes automatizados.
 
