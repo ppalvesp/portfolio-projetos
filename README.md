@@ -5,7 +5,7 @@ Seleção de projetos pessoais de desenvolvimento web, automação e inteligênc
 ## Projetos
 
 ### Calculadora de HP efetivo para Black Desert Online
-**Tecnologias:** aplicação web e motor de cálculos para PvP.
+**Tecnologias:** React 18, TypeScript, Vite, Node.js, Go, Web Workers, Tesseract.js (OCR), jsPDF, Supabase (protótipo A+), Docker e Nginx.
 
 Projeto pessoal para analisar builds de dano e sobrevivência em guerras de larga escala. Compara estilos de jogo contra composições médias de adversários e ajuda a montar builds, avaliar curvas de dano e sobrevivência e planejar melhorias de equipamento considerando status e custo.
 
