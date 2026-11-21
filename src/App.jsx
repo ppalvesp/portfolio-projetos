@@ -181,6 +181,32 @@ function useActiveSection() {
   return activeSection;
 }
 
+function useScrollReveal() {
+  useEffect(() => {
+    if (
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches ||
+      !("IntersectionObserver" in window)
+    ) {
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      entries => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("is-visible");
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.12, rootMargin: "0px 0px -32px 0px" },
+    );
+
+    document.querySelectorAll("[data-reveal]").forEach(section => observer.observe(section));
+    return () => observer.disconnect();
+  }, []);
+}
+
 function ProjectGallery({ project }) {
   const [index, setIndex] = useState(0);
   const [imageFailed, setImageFailed] = useState(false);
@@ -349,7 +375,7 @@ function HeroArtwork() {
 
 function FeaturedProject({ onOpen }) {
   return (
-    <section className="featured-section" id="projeto-principal" aria-labelledby="featured-title">
+    <section className="featured-section" id="projeto-principal" aria-labelledby="featured-title" data-reveal>
       <div className="page-wrap">
         <div className="section-kicker">
           <span>01 — PROJETO EM DESTAQUE</span>
@@ -447,6 +473,7 @@ function App() {
   const [selectedProject, setSelectedProject] = useState(null);
   const openerRef = useRef(null);
   const activeSection = useActiveSection();
+  useScrollReveal();
   const visibleProjects = projects.filter(project => area === "Todos" || project.areas.includes(area));
 
   function openProject(project, opener) {
@@ -520,7 +547,7 @@ function App() {
 
         <FeaturedProject onOpen={openProject} />
 
-        <section className="projects-section page-wrap" id="projetos" aria-labelledby="projects-title">
+        <section className="projects-section page-wrap" id="projetos" aria-labelledby="projects-title" data-reveal>
           <div className="section-heading">
             <div>
               <p className="eyebrow">LABORATÓRIO DE IDEIAS</p>
@@ -548,7 +575,7 @@ function App() {
           </div>
         </section>
 
-        <section className="about-section" id="sobre" aria-labelledby="about-title">
+        <section className="about-section" id="sobre" aria-labelledby="about-title" data-reveal>
           <div className="page-wrap about-inner">
             <p className="eyebrow">SOBRE ESTE ESPAÇO</p>
             <div className="about-copy">

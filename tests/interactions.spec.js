@@ -100,3 +100,18 @@ test("real screenshot gallery switches captures and serves valid images", async 
   await expect(page.getByRole("dialog").getByRole("img")).toHaveAttribute("src", "/previews/calculator-builder.png");
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });
+
+test.describe("motion preference", () => {
+  test.use({ reducedMotion: "no-preference" });
+
+  test("explore link scrolls smoothly and reveals the projects section", async ({ page }) => {
+    await expect(page.locator("html")).toHaveCSS("scroll-behavior", "smooth");
+    const projectsSection = page.locator("#projetos");
+    await expect(projectsSection).not.toHaveClass(/is-visible/);
+    await page.getByRole("link", { name: /Explorar projetos/ }).click();
+    await expect(projectsSection).toHaveClass(/is-visible/);
+    const sectionTop = await projectsSection.evaluate(element => element.getBoundingClientRect().top);
+    const viewportHeight = await page.evaluate(() => window.innerHeight);
+    expect(sectionTop).toBeLessThan(viewportHeight);
+  });
+});
