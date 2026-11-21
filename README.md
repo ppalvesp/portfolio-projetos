@@ -66,6 +66,8 @@ Python · JavaScript · TypeScript · React · Electron · Vite · Go · Node.js
 
 ## Perfil
 
+**Identificação:** P⁴ — Programador Pedro Paulo Pessoa
+
 [GitHub: ppalvesp](https://github.com/ppalvesp)
 
 ## Site de apresentação

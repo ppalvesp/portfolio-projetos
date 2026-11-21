@@ -459,8 +459,8 @@ function HeroArtwork() {
         <b>02</b>
       </div>
       <div className="art-stamp">
-        <span>PP</span>
-        <small>DEV</small>
+        <span>P⁴</span>
+        <small>PROGRAMADOR</small>
       </div>
     </div>
   );
@@ -589,12 +589,13 @@ function App() {
         Pular para o conteúdo
       </a>
       <header className="site-header">
-        <a className="wordmark" href="#inicio" aria-label="Início do portfólio">
+        <a className="wordmark" href="#inicio" aria-label="Início do portfólio de Pedro Paulo Pessoa">
           <span className="wordmark-mark" aria-hidden="true">
-            P.
+            P⁴
           </span>
-          <span>
-            PPALVESP <span className="wordmark-divider">/</span> PORTFÓLIO
+          <span className="wordmark-name">
+            PROGRAMADOR PEDRO PAULO PESSOA
+            <span className="wordmark-divider"> / PORTFÓLIO</span>
           </span>
         </a>
         <nav className="site-nav" aria-label="Navegação principal">
@@ -696,9 +697,9 @@ function App() {
       <footer className="site-footer page-wrap">
         <a className="wordmark" href="#inicio">
           <span className="wordmark-mark" aria-hidden="true">
-            P.
+            P⁴
           </span>
-          <span>PPALVESP</span>
+          <span className="wordmark-name">PROGRAMADOR PEDRO PAULO PESSOA</span>
         </a>
         <p>Feito com curiosidade e vontade de aprender.</p>
         <a href="https://github.com/ppalvesp" target="_blank" rel="noopener noreferrer">
