@@ -74,6 +74,8 @@ Python · JavaScript · TypeScript · React · Electron · Vite · Go · Node.js
 
 O site deste portfólio usa React e Vite. A interface combina uma direção visual editorial em tema escuro, layouts responsivos e componentes acessíveis. Para executá-lo localmente, instale as dependências com `npm ci` e inicie o servidor com `npm run dev`. Para gerar os arquivos de publicação, use `npm run build`.
 
+Na seção Sobre, os contatos de e-mail e telefone podem ser abertos pelo aplicativo correspondente do dispositivo.
+
 Use “Conhecer projeto” para abrir recursos, tecnologias e desafios. A janela pode ser fechada pelo botão “Fechar” ou pela tecla Esc. Os filtros Web, IA, Automação, Discord e Windows se aplicam à lista de outros projetos; a calculadora fica sempre em destaque. O menu indica a seção atual durante a rolagem.
 
 Os detalhes incluem capturas da calculadora, da IDE e do otimizador, além de uma demonstração 3D da IDE com dados simulados. A animação não representa atividade real de agentes. As legendas identificam telas sem eventos ou sem backend, e projetos sem uma captura segura disponível mostram essa limitação.

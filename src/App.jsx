@@ -688,6 +688,15 @@ function App() {
                 <a className="text-link" href="https://github.com/ppalvesp" target="_blank" rel="noopener noreferrer">
                   Acompanhe no GitHub <span aria-hidden="true">↗</span>
                 </a>
+                <div className="contact-details">
+                  <h3>Contato</h3>
+                  <a className="text-link" href="mailto:ppalvesp.med@gmail.com">
+                    ppalvesp.med@gmail.com <span aria-hidden="true">↗</span>
+                  </a>
+                  <a className="text-link" href="tel:+5562986264525">
+                    +55 (62) 98626-4525 <span aria-hidden="true">↗</span>
+                  </a>
+                </div>
               </div>
             </div>
           </div>

@@ -76,6 +76,15 @@ test("navigation follows scrolling and page fits the viewport", async ({ page })
   expect(errors).toEqual([]);
 });
 
+test("contact links expose the email and phone", async ({ page }) => {
+  const about = page.locator("#sobre");
+  await expect(about.getByRole("heading", { name: "Contato" })).toBeVisible();
+  await expect(about.getByRole("link", { name: "ppalvesp.med@gmail.com" }))
+    .toHaveAttribute("href", "mailto:ppalvesp.med@gmail.com");
+  await expect(about.getByRole("link", { name: "+55 (62) 98626-4525" }))
+    .toHaveAttribute("href", "tel:+5562986264525");
+});
+
 test("featured calculator preview shows combat stats and effective HP comparison", async ({ page }) => {
   const preview = page.locator(".featured-visual");
   await expect(preview.getByText("112.500")).toBeVisible();
