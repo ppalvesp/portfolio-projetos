@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 
+const previewUrl = path => `${import.meta.env.BASE_URL}${path}`;
+
 const projects = [
   {
     number: "02",
@@ -27,7 +29,14 @@ const projects = [
     status: "Protótipo funcional · Código-fonte privado",
     previews: [
       {
-        src: "/previews/agent-ide.png",
+        src: previewUrl("previews/agent-ide-demo.gif"),
+        alt: "Demonstração 3D de agentes de desenvolvimento conectados por fluxos animados.",
+        caption: "Demonstração visual com dados simulados; os estados e fluxos não representam atividade real de uma sessão.",
+        width: 1024,
+        height: 768,
+      },
+      {
+        src: previewUrl("previews/agent-ide.png"),
         alt: "Interface do monitor de agentes com lista, área de visualização e inspetor.",
         caption: "Interface real sem eventos carregados. Nenhuma conversa ou atividade privada foi capturada.",
       },
@@ -46,7 +55,7 @@ const projects = [
     status: "Em desenvolvimento · Código-fonte privado",
     previews: [
       {
-        src: "/previews/optimizer.png",
+        src: previewUrl("previews/optimizer.png"),
         alt: "Tela de acesso local do otimizador, com navegação e aviso de acesso restrito.",
         caption: "Tela real de acesso restrito, sem backend conectado. Nenhum diagnóstico ou ajuste foi executado.",
       },
@@ -137,12 +146,12 @@ const calculatorProject = {
   status: "Em desenvolvimento · Código-fonte privado",
   previews: [
     {
-      src: "/previews/calculator-builder.png",
+      src: previewUrl("previews/calculator-builder.png"),
       alt: "Tela Montar build da calculadora com estilos, equipamentos e resumo de status.",
       caption: "Montar build — captura real no modo visitante, com o estado inicial da aplicação.",
     },
     {
-      src: "/previews/calculator-combat.png",
+      src: previewUrl("previews/calculator-combat.png"),
       alt: "Calculadora de combate mostrando os campos do atacante e defensor e o resultado de HP efetivo.",
       caption: "Calculadora — dano, HP efetivo e comparação de defesas com os valores iniciais da aplicação.",
     },
@@ -183,12 +192,7 @@ function useActiveSection() {
 
 function useScrollReveal() {
   useEffect(() => {
-    if (
-      window.matchMedia("(prefers-reduced-motion: reduce)").matches ||
-      !("IntersectionObserver" in window)
-    ) {
-      return;
-    }
+    if (!("IntersectionObserver" in window)) return;
 
     const observer = new IntersectionObserver(
       entries => {
@@ -204,6 +208,76 @@ function useScrollReveal() {
 
     document.querySelectorAll("[data-reveal]").forEach(section => observer.observe(section));
     return () => observer.disconnect();
+  }, []);
+}
+
+function useSmoothAnchorNavigation() {
+  useEffect(() => {
+    let frame = 0;
+    let startTime = 0;
+
+    const stopAnimation = () => {
+      if (frame) cancelAnimationFrame(frame);
+      frame = 0;
+    };
+
+    const animateTo = (target, hash) => {
+      stopAnimation();
+      const start = window.scrollY;
+      const scrollPadding = parseFloat(getComputedStyle(document.documentElement).scrollPaddingTop) || 0;
+      const destination = Math.max(0, target.getBoundingClientRect().top + start - scrollPadding);
+      const distance = destination - start;
+      startTime = 0;
+      window.history.pushState(null, "", hash);
+
+      const step = timestamp => {
+        if (!startTime) startTime = timestamp;
+        const progress = Math.min((timestamp - startTime) / 850, 1);
+        const eased = progress < 0.5
+          ? 4 * progress ** 3
+          : 1 - Math.pow(-2 * progress + 2, 3) / 2;
+        window.scrollTo({ top: start + distance * eased, behavior: "instant" });
+
+        if (progress < 1) frame = requestAnimationFrame(step);
+        else frame = 0;
+      };
+
+      frame = requestAnimationFrame(step);
+    };
+
+    const handleClick = event => {
+      if (
+        event.defaultPrevented ||
+        event.button !== 0 ||
+        event.metaKey ||
+        event.ctrlKey ||
+        event.shiftKey ||
+        event.altKey
+      ) {
+        return;
+      }
+
+      const link = event.target instanceof Element ? event.target.closest('a[href^="#"]') : null;
+      if (!link || link.classList.contains("skip-link")) return;
+
+      const hash = link.getAttribute("href");
+      const target = document.getElementById(hash.slice(1));
+      if (!target) return;
+
+      event.preventDefault();
+      animateTo(target, hash);
+    };
+
+    const stopOnInput = () => stopAnimation();
+    document.addEventListener("click", handleClick);
+    window.addEventListener("wheel", stopOnInput, { passive: true });
+    window.addEventListener("touchstart", stopOnInput, { passive: true });
+    return () => {
+      document.removeEventListener("click", handleClick);
+      window.removeEventListener("wheel", stopOnInput);
+      window.removeEventListener("touchstart", stopOnInput);
+      stopAnimation();
+    };
   }, []);
 }
 
@@ -227,7 +301,13 @@ function ProjectGallery({ project }) {
           <p role="alert">Não foi possível carregar esta captura. Recarregue a página para tentar novamente.</p>
         ) : (
           <a href={preview.src} target="_blank" rel="noopener noreferrer" aria-label="Abrir captura em tamanho original">
-            <img src={preview.src} alt={preview.alt} width="1440" height="1000" onError={() => setImageFailed(true)} />
+            <img
+              src={preview.src}
+              alt={preview.alt}
+              width={preview.width ?? 1440}
+              height={preview.height ?? 1000}
+              onError={() => setImageFailed(true)}
+            />
           </a>
         )}
         <figcaption aria-live="polite">{preview.caption}</figcaption>
@@ -256,29 +336,42 @@ function ProjectGallery({ project }) {
 
 function ProjectDetails({ project, onDismiss }) {
   const dialogRef = useRef(null);
+  const closeTimerRef = useRef(0);
+  const [visible, setVisible] = useState(false);
+  const [closing, setClosing] = useState(false);
+
   useEffect(() => {
     const dialog = dialogRef.current;
     dialog.showModal();
     document.documentElement.classList.add("has-project-dialog");
+    const frame = requestAnimationFrame(() => setVisible(true));
     return () => {
-      dialog.close();
+      cancelAnimationFrame(frame);
+      window.clearTimeout(closeTimerRef.current);
+      if (dialog.open) dialog.close();
       document.documentElement.classList.remove("has-project-dialog");
     };
   }, []);
 
+  function dismiss() {
+    if (closing || closeTimerRef.current) return;
+    setClosing(true);
+    closeTimerRef.current = window.setTimeout(onDismiss, 270);
+  }
+
   return (
     <dialog
       ref={dialogRef}
-      className="project-dialog"
+      className={`project-dialog${visible ? " is-visible" : ""}${closing ? " is-closing" : ""}`}
       aria-labelledby="dialog-title"
       onCancel={event => {
         event.preventDefault();
-        onDismiss();
+        dismiss();
       }}
     >
       <div className="dialog-heading">
         <p className="eyebrow">{project.category}</p>
-        <button type="button" className="dialog-close" onClick={onDismiss} autoFocus>
+        <button type="button" className="dialog-close" onClick={dismiss} autoFocus>
           Fechar <span aria-hidden="true">×</span>
         </button>
       </div>
@@ -474,6 +567,7 @@ function App() {
   const openerRef = useRef(null);
   const activeSection = useActiveSection();
   useScrollReveal();
+  useSmoothAnchorNavigation();
   const visibleProjects = projects.filter(project => area === "Todos" || project.areas.includes(area));
 
   function openProject(project, opener) {

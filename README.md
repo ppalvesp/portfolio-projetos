@@ -74,11 +74,25 @@ O site deste portfólio usa React e Vite. A interface combina uma direção visu
 
 Use “Conhecer projeto” para abrir recursos, tecnologias e desafios. A janela pode ser fechada pelo botão “Fechar” ou pela tecla Esc. Os filtros Web, IA, Automação, Discord e Windows se aplicam à lista de outros projetos; a calculadora fica sempre em destaque. O menu indica a seção atual durante a rolagem.
 
-Os detalhes incluem uma galeria de capturas reais da calculadora, da IDE e do otimizador. As legendas identificam telas sem eventos ou sem backend; não são demonstrações em execução. Projetos sem uma captura segura disponível mostram a limitação explicitamente.
+Os detalhes incluem capturas da calculadora, da IDE e do otimizador, além de uma demonstração 3D da IDE com dados simulados. A animação não representa atividade real de agentes. As legendas identificam telas sem eventos ou sem backend, e projetos sem uma captura segura disponível mostram essa limitação.
 
 Para atualizar as capturas automaticamente no Windows, use `npm run capture:previews`, com Chrome instalado, a calculadora local em `http://127.0.0.1:8180` e as pastas `agent-ide` e `otimizador-windows` ao lado deste repositório. A captura da calculadora usa um navegador novo no modo visitante; a IDE usa um arquivo temporário vazio e não lê conversas; o otimizador serve apenas a tela de acesso, sem iniciar seu backend nem alterar o PC. Revise as imagens antes de publicar.
 
 `npm test` verifica as interações no desktop e no celular usando Playwright com Google Chrome instalado. O servidor temporário dos testes usa a porta 4174, sem alterar o site no Docker.
+
+## GitHub Pages
+
+O site é publicado em `https://ppalvesp.github.io/portfolio-projetos/`. Pushes para `main` acionam o workflow de publicação em `.github/workflows/deploy-pages.yml`.
+
+Para reproduzir o build de produção localmente no Windows, execute:
+
+```powershell
+$env:GITHUB_PAGES="1"
+npm ci
+npm run build
+Remove-Item Env:GITHUB_PAGES
+npm run preview
+```
 
 ### Docker no Ubuntu (WSL)
 

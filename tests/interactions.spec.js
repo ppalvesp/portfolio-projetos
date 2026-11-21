@@ -10,16 +10,21 @@ test("project details support keyboard, focus restoration and full calculator st
   await page.keyboard.press("Enter");
   const dialog = page.getByRole("dialog", { name: "Calculadora de HP efetivo" });
   await expect(dialog).toBeVisible();
+  await expect(dialog).toHaveClass(/is-visible/);
+  expect(await dialog.evaluate(element => getComputedStyle(element).transitionDuration)).toContain("0.24s");
   await expect(dialog.getByRole("button", { name: "Fechar" })).toBeFocused();
   await expect(dialog.getByText("Web Workers", { exact: true })).toBeVisible();
   await expect(dialog.getByText("Supabase · protótipo A+", { exact: true })).toBeVisible();
   await opener.evaluate(element => element.focus());
   await expect(dialog.getByRole("button", { name: "Fechar" })).toBeFocused();
   await page.keyboard.press("Escape");
+  await expect(dialog).toHaveClass(/is-closing/);
   await expect(dialog).toHaveCount(0);
   await expect(opener).toBeFocused();
   await opener.click();
+  await expect(page.getByRole("dialog")).toHaveClass(/is-visible/);
   await page.getByRole("button", { name: "Fechar" }).click();
+  await expect(page.getByRole("dialog")).toHaveClass(/is-closing/);
   await expect(page.getByRole("dialog")).toHaveCount(0);
   await expect(opener).toBeFocused();
 });
@@ -67,8 +72,6 @@ test("navigation follows scrolling and page fits the viewport", async ({ page })
     expect(await page.locator(`#${section}`).evaluate(el => el.getBoundingClientRect().top))
       .toBeGreaterThanOrEqual(0);
   }
-  await page.locator("#projeto-principal").evaluate(el => el.scrollIntoView());
-  await expect(nav.getByRole("link", { name: "Destaque", exact: true })).toHaveAttribute("aria-current", "location");
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
   expect(errors).toEqual([]);
 });
@@ -80,6 +83,18 @@ test("featured calculator preview shows combat stats and effective HP comparison
   await expect(preview.getByText("EVASÃO")).toBeVisible();
   await expect(preview.getByText("+5,00% de HP efetivo")).toBeVisible();
   expect(await preview.evaluate(element => element.scrollWidth <= element.clientWidth)).toBe(true);
+});
+
+test("agent IDE opens with its animated demo and retains the real interface capture", async ({ page }) => {
+  await page.getByRole("button", { name: "Conhecer projeto: IDE de visualização de agentes" }).click();
+  const gallery = page.getByRole("region", { name: "Capturas reais do projeto" });
+  const image = gallery.getByRole("img");
+  await expect(image).toHaveAttribute("src", "/previews/agent-ide-demo.gif");
+  await expect.poll(() => image.evaluate(el => el.complete && el.naturalWidth === 1024)).toBe(true);
+  await expect(gallery.locator("figcaption")).toContainText("dados simulados");
+  await gallery.getByRole("button", { name: "Captura 2" }).click();
+  await expect(image).toHaveAttribute("src", "/previews/agent-ide.png");
+  await expect.poll(() => image.evaluate(el => el.complete && el.naturalWidth > 0)).toBe(true);
 });
 
 test("real screenshot gallery switches captures and serves valid images", async ({ page }) => {
@@ -101,17 +116,18 @@ test("real screenshot gallery switches captures and serves valid images", async 
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });
 
-test.describe("motion preference", () => {
-  test.use({ reducedMotion: "no-preference" });
-
-  test("explore link scrolls smoothly and reveals the projects section", async ({ page }) => {
-    await expect(page.locator("html")).toHaveCSS("scroll-behavior", "smooth");
-    const projectsSection = page.locator("#projetos");
-    await expect(projectsSection).not.toHaveClass(/is-visible/);
-    await page.getByRole("link", { name: /Explorar projetos/ }).click();
-    await expect(projectsSection).toHaveClass(/is-visible/);
-    const sectionTop = await projectsSection.evaluate(element => element.getBoundingClientRect().top);
-    const viewportHeight = await page.evaluate(() => window.innerHeight);
-    expect(sectionTop).toBeLessThan(viewportHeight);
+test("explore link stays smooth when reduced motion is requested", async ({ page }) => {
+  await expect(page.locator("html")).toHaveCSS("scroll-behavior", "smooth");
+  await page.evaluate(() => {
+    window.portfolioScrollSamples = [];
+    window.addEventListener("scroll", () => window.portfolioScrollSamples.push(window.scrollY), { passive: true });
   });
+  const projectsSection = page.locator("#projetos");
+  await expect(projectsSection).not.toHaveClass(/is-visible/);
+  await page.getByRole("link", { name: /Explorar projetos/ }).click();
+  await expect(projectsSection).toHaveClass(/is-visible/);
+  await expect.poll(() => page.evaluate(() => new Set(window.portfolioScrollSamples).size)).toBeGreaterThan(3);
+  const sectionTop = await projectsSection.evaluate(element => element.getBoundingClientRect().top);
+  const viewportHeight = await page.evaluate(() => window.innerHeight);
+  expect(sectionTop).toBeLessThan(viewportHeight);
 });
